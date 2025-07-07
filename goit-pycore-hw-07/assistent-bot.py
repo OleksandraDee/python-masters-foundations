@@ -197,6 +197,25 @@ def handle_birthdays(book):
         result.append(f"{b['name']} — привітати {b['congrats_date']}")
     return "\n".join(result)
 
+def handle_add_birthday(args, book):
+    if len(args) < 2:
+        return "Команда 'add-birthday' вимагає два аргументи: Ім’я і дату народження. Наприклад: add-birthday Anna 12.12.1990"
+    name, bday = args[0], args[1]
+    record = book.find(name)
+    if not record:
+        return "Контакт не знайдено."
+    return record.add_birthday(bday)
+
+def handle_show_birthday(args, book):
+    if len(args) < 1:
+        return "Команда 'show-birthday' вимагає ім’я. Наприклад: show-birthday Anna"
+    name = args[0]
+    record = book.find(name)
+    if not record:
+        return "Контакт не знайдено."
+    if not record.birthday:
+        return "Для цього контакту не вказано день народження."
+    return f"День народження {name}: {record.birthday.value.strftime('%d.%m.%Y')}"
 
 # ----------------------- Основна функція -----------------------
 def main():
@@ -223,6 +242,10 @@ def main():
             print(handle_phone(args, book))
         elif command == "all":
             print(handle_all(book))
+        elif command == "add-birthday":
+            print(handle_add_birthday(args, book))
+        elif command == "show-birthday":
+            print(handle_show_birthday(args, book))
         elif command == "birthdays":
             print(handle_birthdays(book))
         else:

@@ -1,4 +1,3 @@
-import sys
 from collections import defaultdict
 
 def parse_log_line(line: str) -> dict:
@@ -15,9 +14,6 @@ def load_logs(file_path: str) -> list:
                 logs.append(parse_log_line(line))
     return logs
 
-def filter_logs_by_level(logs: list, level: str) -> list:
-    return list(filter(lambda log: log['level'].lower() == level.lower(), logs))
-
 def count_logs_by_level(logs: list) -> dict:
     counts = defaultdict(int)
     for log in logs:
@@ -25,36 +21,22 @@ def count_logs_by_level(logs: list) -> dict:
     return counts
 
 def display_log_counts(counts: dict):
-    print(f"{'Рівень логування':<18} | {'Кількість':<8}")
-    print("-" * 30)
+    print(f"{'Log Level':<15} | {'Count':<5}")
+    print("-" * 25)
     for level, count in counts.items():
-        print(f"{level:<18} | {count:<8}")
+        print(f"{level:<15} | {count:<5}")
 
 def main():
-    if len(sys.argv) < 2:
-        print("Використання: python log_parser.py <шлях до файлу> [<рівень>]")
-        sys.exit(1)
-
-    file_path = sys.argv[1]
+    file_path = r"logs.txt"
 
     try:
         logs = load_logs(file_path)
     except FileNotFoundError:
-        print(f"Файл {file_path} не знайдено.")
-        sys.exit(1)
+        print(f"File {file_path} not found.")
+        return
 
     counts = count_logs_by_level(logs)
     display_log_counts(counts)
-
-    if len(sys.argv) == 3:
-        level = sys.argv[2]
-        filtered_logs = filter_logs_by_level(logs, level)
-        if filtered_logs:
-            print(f"\nДеталі логів для рівня '{level.upper()}':")
-            for log in filtered_logs:
-                print(f"{log['date']} {log['time']} - {log['message']}")
-        else:
-            print(f"\nЛогів для рівня '{level.upper()}' не знайдено.")
 
 if __name__ == "__main__":
     main()
